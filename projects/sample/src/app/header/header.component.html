@@ -1,0 +1,15 @@
+<mat-toolbar color="primary" class="toolbar">
+    <span>
+        <button mat-icon-button class="menu-icon" aria-label="menu icon" (click)="toggleSidenav()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <button mat-icon-button class="home-icon" aria-label="home icon" (click)="goHome()">
+            <mat-icon>home</mat-icon>
+        </button>
+    </span>
+    <button mat-button *ngIf="!dataService.currentUser && !loading" (click)="connectWithTwitch()">Connect with Twitch</button>
+    <span *ngIf="dataService.currentUser" class="user-info" (click)="goToProfile()">
+        <img class="avatar" [src]="dataService.currentUser.profileImageUrl"/>
+        <span>{{dataService.currentUser.displayName}}</span>
+    </span>
+</mat-toolbar>

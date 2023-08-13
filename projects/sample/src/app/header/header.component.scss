@@ -1,0 +1,25 @@
+.toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    @media(max-width: 599px) {
+        .avatar {
+            max-height: 56px;
+        }
+    }
+    @media(min-width: 600px) {
+        .avatar {
+            max-height: 64px;
+        }
+    }
+    .avatar {
+        margin-right: 1em;
+    }
+    .user-info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        cursor: pointer;
+    }
+}

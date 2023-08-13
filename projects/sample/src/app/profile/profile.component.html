@@ -1,0 +1,5 @@
+<ng-container *ngIf="currentUser">
+    <img [src]="currentUser.profileImageUrl"/>
+    Work in Progress...
+    <button mat-button *ngIf="currentUser.admin" (click)="loadMatchs()">Charger les matchs</button>
+</ng-container>

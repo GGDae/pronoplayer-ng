@@ -1,0 +1,22 @@
+<div class="manage" [ngClass]="{'center': loading || !groups || groups.length < 1}">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+    <ng-container *ngIf="groups && groups.length > 0">
+        <mat-form-field class="field">
+            <mat-select [(value)]="group">
+                <mat-option *ngFor="let grp of groups" [value]="grp">{{grp.name}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        
+        <div class="competitions" *ngIf="group && competitions">
+            <div class="competition" *ngFor="let competition of competitions">
+                <mat-checkbox [checked]="isCompetitionInGroup(competition)" (change)="addOrRemoveCompetition(competition, $event)"></mat-checkbox>
+                {{competition.name}}
+                {{competition.year}}
+                {{competition.split}}
+            </div>
+        </div>
+        <button class="invite-button" mat-button (click)="getInviteId()">Copier l'url d'invitation</button>
+    </ng-container>
+    
+    <div class="center" *ngIf="!loading && (!groups || groups.length < 1)">Tu n'as aucun groupe à gérer !</div>
+</div>

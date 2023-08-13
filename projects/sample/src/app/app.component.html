@@ -1,0 +1,20 @@
+<app-header (eventEmitter)="toggleSidenav()"></app-header>
+<mat-sidenav-container class="container">
+    <mat-sidenav #sidenav mode="side" class="sidenav">
+        <ul>
+            <li class="menu-item" (click)="goToRanking()">Classement</li>
+            <li class="menu-item" (click)="goToGroupManagement()">Groupes</li>
+            <li class="menu-item" (click)="goToStandings()">Classement Ligues</li>
+        </ul>
+    </mat-sidenav>
+    
+    <mat-sidenav-content class="sidenav-content" [ngClass]="{'loading': loading}" (click)="closeSidenav()">
+        <div class="welcome" *ngIf="!dataService.currentUser && !loading">
+            <span>Bienvenue sur PronoPlayer !</span>
+            <span>Tu peux te connecter via Twitch en cliquant sur le bouton en haut à droite.</span>
+        </div>
+        <router-outlet *ngIf="dataService.currentUser && !loading"></router-outlet>
+        <mat-spinner *ngIf="loading"></mat-spinner>
+        <app-footer></app-footer>
+    </mat-sidenav-content>
+</mat-sidenav-container>

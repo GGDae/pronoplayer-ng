@@ -1,0 +1,29 @@
+[debug] [2023-02-05T22:54:06.581Z] ----------------------------------------------------------------------
+[debug] [2023-02-05T22:54:06.582Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\julie\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2023-02-05T22:54:06.583Z] CLI Version:   11.22.0
+[debug] [2023-02-05T22:54:06.583Z] Platform:      win32
+[debug] [2023-02-05T22:54:06.583Z] Node Version:  v16.18.0
+[debug] [2023-02-05T22:54:06.584Z] Time:          Sun Feb 05 2023 23:54:06 GMT+0100 (heure normale d’Europe centrale)
+[debug] [2023-02-05T22:54:06.584Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-02-05T22:54:06.591Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-02-05T22:54:06.591Z] > authorizing via signed-in user (julien.fichon@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\julie\workspace\pronopixel
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[info] i  If you want to create a project in a Google Cloud organization or folder, please use "firebase projects:create" instead, and return to this command when you've created the project. 

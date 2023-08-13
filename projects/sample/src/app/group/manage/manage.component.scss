@@ -1,0 +1,55 @@
+.manage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    text-align: center;
+    padding-bottom: .5rem;
+    
+    .field {
+        text-align: center;
+        padding-bottom: 2rem;
+    }
+    
+    .competitions {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .invite-button {
+        margin-top: 10%;
+        background-color: #673ab7;
+        color: white;
+    }
+}
+
+
+.center {    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+@media(min-width: 600px) {
+    .field {
+        width: 30%;
+    }
+    
+    .competitions {
+        gap: 2rem;
+    }
+}
+@media(max-width: 599px) {
+    .field {
+        width: 80%;
+    }
+    
+    .competitions {
+        gap: 1rem;
+    }
+}

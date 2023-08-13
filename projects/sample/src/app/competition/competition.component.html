@@ -1,0 +1,48 @@
+<div *ngIf="dataService.currentUser">
+    <button class="go-back" mat-icon-button (click)="goBack()"><mat-icon>arrow_left</mat-icon></button>
+    <mat-progress-bar class="saving-indicator" *ngIf="needSaving || saving" mode="indeterminate"></mat-progress-bar>
+    <div class="current-competition" [ngClass]="{'with-padding': !showCoin}" *ngIf="currentWeek else noData">
+        <div class="selection block">
+            <button mat-icon-button (click)="getPreviousWeek()"><mat-icon class="week-arrow">keyboard_arrow_left</mat-icon></button>
+            <span class="week-number">{{currentWeek.block}}</span>
+            <button mat-icon-button (click)="getNextWeek()"><mat-icon class="week-arrow">keyboard_arrow_right</mat-icon></button>
+        </div>
+        
+        <div *ngFor="let day of currentWeek.pronoDays" (swipeLeft)="getPreviousWeek()" (swipeRight)="getNextWeek()">
+            <div class="day-selection">
+                <span class="day-number">Jour {{day.day}} : {{day.date}}</span>
+            </div>
+            <div *ngFor="let match of day.matchs">
+                <mat-radio-group class="prono-line" [disabled]="isLocked(match)" [ngClass]="{'smaller': match.strategy.count === 1}">
+                    <ng-container *ngFor="let team of match.teams, let j = index">
+                        <div class="team-container" [ngClass]="{'inverted' : j % 2 === 1}">
+                            <span class="team" [ngClass]="{'inverted' : j % 2 === 0, 'won': match.result === team.code, 'lost': match.result && match.result !== team.code, 'pointer': match.strategy.count === 1,'best-of': match.strategy.count > 1}" (click)="selectTeam(match, team)">
+                                <mat-radio-button *ngIf="match.strategy.count === 1" [disabled]="isLocked(match)" [ngClass]="{'with-padding': j % 2 === 1}" [checked]="isTeamSelected(match, team)" [value]="team.code"></mat-radio-button>
+                                <img class="team-logo" [src]="team.code !== 'TBD' ? team.image : 'assets/images/team-tbd.png'">
+                                <span class="team-name" *ngIf="!smallScreen">{{team.name}}</span>
+                                <span class="team-name" *ngIf="smallScreen">{{team.code}}</span>
+                                <span class="records" *ngIf="!smallScreen && match.strategy.count === 1">({{team.record.wins}} - {{team.record.losses}})</span>
+                                <span *ngIf="match.strategy.count > 1 && match.result" class="wins">{{team.result.gameWins}}</span>
+                            </span>
+                        </div>
+                        <div class="date-score" *ngIf="j === 0">
+                            <span class="date-time">{{match.dateTime | date: 'HH:mm'}}</span>
+                            <mat-form-field class="score-choice" *ngIf="match.strategy.count > 1">
+                                <mat-select [disabled]="isLocked(match)" [(value)]="scoreForMatch[match.id]" (selectionChange)="setScore(match)">
+                                    <mat-option *ngFor="let outcome of getPossibleOutcomes(match.strategy.count)"
+                                    [disabled]="isLocked(match)"
+                                    [value]="outcome">
+                                    {{outcome}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                </mat-radio-group>
+            </div>
+        </div>
+        <img class="coin" src="assets/images/drolar.png" *ngIf="showCoin" (click)="randomize()">
+    </div>
+    <ng-template #noData>
+        <div *ngIf="!loading" class="no-data">Pas encore de matchs prévus... Reviens plus tard !</div>
+    </ng-template>
+</div>

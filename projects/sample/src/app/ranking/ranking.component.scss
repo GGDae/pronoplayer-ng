@@ -1,0 +1,76 @@
+.ranking {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    text-align: center;
+    padding-bottom: .5rem;
+    
+    .field {
+        text-align: center;
+    }
+    
+    .ranking-table {
+        
+        .rank {
+            font-weight: bold;
+
+            &.inside-medal {
+                position: absolute;
+                margin-top: 18px;
+                margin-left: -24px;
+            }
+        }
+
+        .medal {
+            width: 40px;
+        }
+        .mat-header-cell {
+            text-align: center;
+        }
+        
+        .avatar-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    
+    .paginator {
+        background-color: lightsteelblue;
+    }
+    
+    
+    .mat-table {
+        background-color: lightsteelblue;
+    }
+    
+    .avatar {
+        max-height: 50px;
+    }
+}
+
+@media(min-width: 600px) {
+    .field {
+        width: 30%;
+    }
+    .ranking-table {
+        width: 60vw;
+    }
+    .paginator {
+        width: 60vw;
+    }
+}
+@media(max-width: 599px) {
+    .field {
+        width: 80%;
+    }
+    
+    .ranking-table {
+        width: 90vw;
+    }
+    .paginator {
+        width: 90vw;
+    }
+}

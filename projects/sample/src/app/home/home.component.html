@@ -1,0 +1,29 @@
+<ng-container>
+    <div *ngIf="!loading">
+        <div class="welcome">
+            <span *ngIf="dataService.currentUser">Bienvenue sur PronoPlayer !</span>
+            <span *ngIf="dataService.currentUser">Si quelqu'un t'a invité via un lien, tu devrais déjà voir un groupe ci-dessous.</span>
+            <span *ngIf="dataService.currentUser">Tu peux cliquer dessus, sélectionner la ou les compétitions ouvertes dans le groupe, et commencer à pronostiquer les prochains matchs !</span>
+        </div>
+        
+        <div *ngIf="dataService.currentUser">
+            <span class="group-title" *ngIf="dataService.currentUser.groups">Tes groupes :</span>
+            <div class="group-container">
+                <div class="group" *ngFor="let group of dataService.currentUser.groups">
+                    <span class="group-name" (click)="selectGroup(group)">{{group.name}}</span>
+                </div>
+            </div>
+            <div class="welcome">
+                <span *ngIf="!dataService.currentUser.groups">Tu n'es dans aucun groupe !</span>
+                <span>Si quelqu'un t'as donné un code d'invitation, tu peux le saisir ici :</span>
+                <div class="input-field">
+                    <mat-form-field>
+                        <input matInput placeholder="Code d'invitation" [(ngModel)]="groupIdToJoin">
+                    </mat-form-field>
+                    <button mat-button class="join-button" (click)="joinGroup()">Rejoindre</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+

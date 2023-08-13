@@ -1,0 +1,22 @@
+.invite {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1em;
+    font-size: 2em;
+    text-align: center;
+    padding: 1em 3em;
+
+    .join {
+        display: flex;
+        justify-content: center;
+
+        .button {
+            cursor: pointer;
+            height: 3rem;
+            font-size: 1.5rem;
+            background-color: #673ab7;
+            color: white;
+        }
+    }
+}

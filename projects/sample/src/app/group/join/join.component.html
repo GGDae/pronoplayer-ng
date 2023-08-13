@@ -1,0 +1,7 @@
+<div *ngIf="group && !alreadyMember" class="invite">
+    <span>Tu as été invité à rejoindre :</span>
+    <span>{{group.name}}</span>
+    <span>Pour accepter et rejoindre le groupe, clique sur le boutton ci-dessous :</span>
+    <span class="join"><button class="button" mat-button (click)="joinGroup()">Rejoindre</button></span>
+</div>
+<span class="invite" *ngIf="group && alreadyMember">Tu es déjà membre du groupe : {{group.name}}</span>

@@ -1,0 +1,51 @@
+.container {
+    margin-bottom: 5%;
+}
+
+.competitions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 8vh 0;
+}
+
+.competition {
+    display: flex;
+    justify-content: center;
+    border: 2px solid rgb(23, 23, 85);
+    border-radius: 14px;
+    background-color: rgb(151, 181, 238);
+    user-select: none;
+    text-align: center;
+    text-wrap: balance;
+
+    &:hover {
+        background-color: #9abae2;
+        cursor: pointer;
+    }
+    &:hover {
+        background-color: #9abae2;
+        cursor: pointer;
+    }
+}
+@media(min-width: 600px) {
+    .competition {
+        font-size: 4rem;
+        padding: .5rem .5em;
+    }
+}
+@media(max-width: 599px) {
+    .competition {
+        width: 80vw;
+        font-size: 2rem;
+        padding: .5rem .5em;
+    }
+}
+
+.go-back {
+    position: absolute;
+    transform: scale(1.5);
+}
+

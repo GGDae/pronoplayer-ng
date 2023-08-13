@@ -1,0 +1,45 @@
+<div class="ranking" *ngIf="dataService.currentUser">
+    <mat-form-field class="field">
+        <mat-select [(value)]="group" (selectionChange)="changeGroup()">
+            <mat-option *ngFor="let grp of groups" [value]="grp">{{grp.name}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field class="field" *ngIf="group && competition">
+        <mat-select [(value)]="competition.id" (selectionChange)="changeCompetition()">
+            <mat-option *ngFor="let comp of competitions" [value]="comp.id">
+                {{comp.name}}
+                {{comp.year}}
+                {{comp.split}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    
+    <div class="ranking" *ngIf="dataSource && sortedRankingWithUserData && sortedRankingWithUserData.length > 0">
+        <table class="ranking-table" mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="rank">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let item">
+                    <img *ngIf="item.rank === 1" class="medal" src="assets/images/gold-medal.svg"/>
+                    <img *ngIf="item.rank === 2" class="medal" src="assets/images/silver-medal.svg"/>
+                    <img *ngIf="item.rank === 3" class="medal" src="assets/images/bronze-medal.svg"/>
+                    <span class="rank" [ngClass]="{'inside-medal': item.rank < 4}">{{ item.rank }}</span>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="avatar">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let item" class="avatar-cell"><img class="avatar" [src]="item.user.profileImageUrl"/></td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Pseudo </th>
+                <td mat-cell *matCellDef="let item"> {{ item.user.displayName }} </td>
+            </ng-container>
+            <ng-container matColumnDef="score">
+                <th mat-header-cell *matHeaderCellDef> Score </th>
+                <td mat-cell *matCellDef="let item"> {{ item.score }} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+    <mat-paginator #paginator class="paginator" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
+</div>
