@@ -4,6 +4,7 @@ import { User } from '../model/user';
 import { UserService } from '../services/user.service';
 import { CompetitionService } from '../services/competition.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-profile',
@@ -16,15 +17,22 @@ export class ProfileComponent implements OnInit {
   
   constructor(private route: ActivatedRoute,
     private competitionService: CompetitionService,
+    public dataService: DataService,
     private snackBar: MatSnackBar,
     private userService: UserService) { }
     
     ngOnInit(): void {
       const userId = this.route.snapshot.paramMap.get('id');
       if (!!userId) {
-        this.userService.getUser(userId).subscribe(user => {
-          this.currentUser = user;
-        });
+        if (this.dataService.currentUser.userId === userId) {
+          this.userService.getUser(userId).subscribe(user => {
+            this.currentUser = user;
+          });
+        } else {
+          this.userService.getLightUser(userId).subscribe(user => {
+            this.currentUser = user;
+          });
+        }
       }
     }
     

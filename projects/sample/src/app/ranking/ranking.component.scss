@@ -7,6 +7,10 @@
     text-align: center;
     padding-bottom: .5rem;
     
+    mat-spinner {
+        margin: 5% auto;
+    }
+    
     .field {
         text-align: center;
     }
@@ -15,14 +19,14 @@
         
         .rank {
             font-weight: bold;
-
+            
             &.inside-medal {
                 position: absolute;
                 margin-top: 18px;
-                margin-left: -24px;
+                margin-left: -23.8px;
             }
         }
-
+        
         .medal {
             width: 40px;
         }
@@ -35,10 +39,19 @@
             justify-content: center;
             align-items: center;
         }
+        
+        .badge-span {
+            display: flex;
+        }
     }
     
     .paginator {
         background-color: lightsteelblue;
+        display: none;
+        
+        &.show {
+            display: block;
+        }
     }
     
     
@@ -48,6 +61,12 @@
     
     .avatar {
         max-height: 50px;
+    }
+    
+    .badge {
+        max-height: 35px;
+        border-radius: 50%;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     }
 }
 
@@ -61,6 +80,9 @@
     .paginator {
         width: 60vw;
     }
+    .badge-span {
+        width: 45px;
+    }
 }
 @media(max-width: 599px) {
     .field {
@@ -73,4 +95,11 @@
     .paginator {
         width: 90vw;
     }
+    .badge-span {
+        width: 40px;
+    }
+}
+
+.no-data {
+    padding-top: 5%;
 }

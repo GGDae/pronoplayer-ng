@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ProfileRoutingModule } from './profile-routing.module';
 import { ProfileComponent } from './profile.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 
@@ -20,6 +21,7 @@ import { ProfileComponent } from './profile.component';
     MatRadioModule,
     MatButtonModule,
     MatIconModule,
+    MatCheckboxModule,
   ]
 })
 export class ProfileModule { }

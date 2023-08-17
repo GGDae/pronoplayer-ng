@@ -29,6 +29,7 @@ export class RankingComponent implements OnInit {
   public pageSizeOptions: number[] = [10, 20, 50];
   public displayedColumns: string[] = ['rank', 'avatar', 'name', 'score'];
   public dataSource!: MatTableDataSource<PronoRanking>;
+  public loading = false;
   @ViewChild('paginator') paginator!: MatPaginator;
   
   constructor(public dataService: DataService,
@@ -39,6 +40,7 @@ export class RankingComponent implements OnInit {
     protected cd: ChangeDetectorRef) { }
     
     ngOnInit(): void {
+      this.loading = true;
       const obs: Observable<any>[] = [];
       this.dataService.currentUser.groups?.forEach(userGroup => {
         obs.push(this.groupService.getGroup(userGroup.id).pipe(tap(group => {
@@ -82,6 +84,7 @@ export class RankingComponent implements OnInit {
     }
     
     loadRanking() {
+      this.loading = true;
       this.sortedRankingWithUserData = [];
       const rankingWithUserData: PronoRanking[] = [];
       const obs: Observable<any>[] = [];
@@ -95,11 +98,26 @@ export class RankingComponent implements OnInit {
         });
         forkJoin(obs).subscribe(() => {
           this.sortedRankingWithUserData = rankingWithUserData.sort((a, b) => Number(b.score) - Number(a.score));
+          let previousValue: PronoRanking;
           this.sortedRankingWithUserData.forEach((value, index) => {
-            value.rank = index + 1;
+            let rank: number;
+            if (previousValue) {
+              if (previousValue.score === value.score) {
+                rank = previousValue.rank;
+              } else {
+                rank = index + 1;
+                value.displayedRank = rank;
+              }
+            } else {
+              rank = index + 1;
+              value.displayedRank = rank;
+            }
+            value.rank = rank;
+            previousValue = value;
           });
           this.dataSource = new MatTableDataSource(this.sortedRankingWithUserData);
           this.dataSource.paginator = this.paginator;
+          this.loading = false;
           this.cd.markForCheck();
         });
       });

@@ -1,0 +1,36 @@
+.mat-dialog-title, .mat-dialog-content, .mat-dialog-actions {
+    justify-content: center;
+    text-align: center;
+}
+
+.mat-button {
+    background-color: #673ab7;
+    color: white;
+}
+
+.custom-bg {
+    background-color: #ffffff00;
+    border: none;
+    cursor: pointer;
+}
+
+.nono-yesyes {
+    height: 64px;
+}
+
+@media(min-width: 600px) {
+    .custom-bg {
+        padding: 0 3rem;
+    }
+    .mighty-drolar-bill {
+        width: 600px;
+    }
+}
+@media(max-width: 599px) {
+    .custom-bg {
+        padding: 0 1rem;
+    }
+    .mighty-drolar-bill {
+        width: 66vw;
+    }
+}

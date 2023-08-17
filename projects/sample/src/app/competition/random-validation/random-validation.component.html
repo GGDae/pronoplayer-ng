@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Banque Fédérale Drolienne</h2>
+<mat-dialog-content>
+    <img class="mighty-drolar-bill" src="assets/images/drolar_billet_100.png">
+    <p>Tu es sur le point d'enregistrer des pronostics aléatoires pour toute la semaine affichée.</p>
+    <p>Es-tu certain ?</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <img class="custom-bg nono-yesyes" mat-dialog-close src="assets/images/nono.webp">
+    <img class="custom-bg nono-yesyes" (click)="onValidate()" src="assets/images/yesyes.webp">
+</mat-dialog-actions>

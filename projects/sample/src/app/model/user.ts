@@ -1,3 +1,4 @@
+import { Badge } from "./badge";
 import { Group } from "./group";
 
 export interface User {
@@ -9,4 +10,5 @@ export interface User {
     favouriteTeam?: string;
     profileImageUrl?: string;
     groups?: Group[];
+    badges?: Badge[];
 }

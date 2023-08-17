@@ -3,7 +3,8 @@ import { User } from "./user";
 export class PronoRanking {
     user?: User;
     score?: number;
-    rank?: number;
+    rank!: number;
+    displayedRank!: number;
     constructor(
         user: User,
         score: number | string,

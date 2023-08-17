@@ -9,7 +9,8 @@ import { RankingComponent } from './ranking.component';
 import { RankingRoutingModule } from './ranking-routing.module';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -26,6 +27,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         MatSelectModule,
         MatTableModule,
         MatPaginatorModule,
+        MatProgressSpinnerModule,
+        MatTooltipModule,
     ],
     providers: [
         DatePipe,

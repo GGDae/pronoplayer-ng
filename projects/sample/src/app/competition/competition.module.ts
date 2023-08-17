@@ -8,12 +8,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 import { CompetitionComponent } from './competition.component';
 import { CompetitionRoutingModule } from './competition-routing.module';
+import { RandomValidationComponent } from './random-validation/random-validation.component';
+
 
 @NgModule({
   declarations: [
     CompetitionComponent,
+    RandomValidationComponent,
   ],
   imports: [
     CommonModule,
@@ -26,6 +30,7 @@ import { CompetitionRoutingModule } from './competition-routing.module';
     MatSelectModule,
     MatCheckboxModule,
     MatProgressBarModule,
+    MatDialogModule,
   ]
 })
 export class CompetitionModule { }

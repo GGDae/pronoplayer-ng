@@ -2,6 +2,10 @@
     margin-bottom: 5%;
 }
 
+.invisible {
+    visibility: hidden;
+}
+
 .no-data {
     display: flex;
     font-size: 1.5rem;
@@ -112,6 +116,11 @@
             height: 4em;
             background-color: lightsteelblue;
             
+            &.bad-result {
+                opacity: 0.6;
+                background-color: #b598e6 !important;
+            }
+            
             &.best-of {
                 width: 35vw;
             }
@@ -128,7 +137,7 @@
                 background-color: #a67ded;
                 border-radius: 12px;
             }
-
+            
             &.lost {
                 opacity: 0.6;
             }

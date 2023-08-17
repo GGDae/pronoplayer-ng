@@ -3,9 +3,9 @@
     <mat-progress-bar class="saving-indicator" *ngIf="needSaving || saving" mode="indeterminate"></mat-progress-bar>
     <div class="current-competition" [ngClass]="{'with-padding': !showCoin}" *ngIf="currentWeek else noData">
         <div class="selection block">
-            <button mat-icon-button (click)="getPreviousWeek()"><mat-icon class="week-arrow">keyboard_arrow_left</mat-icon></button>
+            <button mat-icon-button [ngClass]="{'invisible' : currentIndex === 0}" (click)="getPreviousWeek()"><mat-icon class="week-arrow">keyboard_arrow_left</mat-icon></button>
             <span class="week-number">{{currentWeek.block}}</span>
-            <button mat-icon-button (click)="getNextWeek()"><mat-icon class="week-arrow">keyboard_arrow_right</mat-icon></button>
+            <button mat-icon-button [ngClass]="{'invisible' : currentIndex >= pronoWeeks.length - 1}" (click)="getNextWeek()"><mat-icon class="week-arrow">keyboard_arrow_right</mat-icon></button>
         </div>
         
         <div *ngFor="let day of currentWeek.pronoDays" (swipeLeft)="getPreviousWeek()" (swipeRight)="getNextWeek()">
@@ -16,7 +16,7 @@
                 <mat-radio-group class="prono-line" [disabled]="isLocked(match)" [ngClass]="{'smaller': match.strategy.count === 1}">
                     <ng-container *ngFor="let team of match.teams, let j = index">
                         <div class="team-container" [ngClass]="{'inverted' : j % 2 === 1}">
-                            <span class="team" [ngClass]="{'inverted' : j % 2 === 0, 'won': match.result === team.code, 'lost': match.result && match.result !== team.code, 'pointer': match.strategy.count === 1,'best-of': match.strategy.count > 1}" (click)="selectTeam(match, team)">
+                            <span class="team" [ngClass]="{'inverted' : j % 2 === 0, 'won': match.result === team.code, 'lost': match.result && match.result !== team.code, 'pointer': match.strategy.count === 1,'best-of': match.strategy.count > 1, 'bad-result' : match.result === team.code && !isTeamSelected(match, team)}" (click)="selectTeam(match, team)">
                                 <mat-radio-button *ngIf="match.strategy.count === 1" [disabled]="isLocked(match)" [ngClass]="{'with-padding': j % 2 === 1}" [checked]="isTeamSelected(match, team)" [value]="team.code"></mat-radio-button>
                                 <img class="team-logo" [src]="team.code !== 'TBD' ? team.image : 'assets/images/team-tbd.png'">
                                 <span class="team-name" *ngIf="!smallScreen">{{team.name}}</span>

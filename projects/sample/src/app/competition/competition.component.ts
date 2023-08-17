@@ -13,6 +13,8 @@ import { Match } from '../model/match';
 import { Observable, of } from 'rxjs';
 import { Team } from '../model/team';
 import { MatchScore } from '../model/matchScore';
+import { MatDialog } from '@angular/material/dialog';
+import { RandomValidationComponent } from './random-validation/random-validation.component';
 
 @Component({
   selector: 'app-competition',
@@ -52,6 +54,7 @@ export class CompetitionComponent implements OnInit, OnDestroy {
     protected router: Router,
     protected datePipe: DatePipe,
     protected snackBar: MatSnackBar,
+    private dialog: MatDialog,
     protected cd: ChangeDetectorRef) {
     }
     
@@ -101,8 +104,7 @@ export class CompetitionComponent implements OnInit, OnDestroy {
         pronoWeeks.sort((a, b) => new Date(a.lockDate).getTime() - new Date(b.lockDate).getTime());
         this.pronoWeeks = pronoWeeks;
         const closestWeek = this.findClosestWeek();
-        
-        if (closestWeek && closestWeek.week && closestWeek.index) {
+        if (closestWeek && closestWeek.week && closestWeek.index > -1) {
           this.currentWeek = closestWeek.week;
           this.currentIndex = closestWeek.index;
         }
@@ -118,28 +120,58 @@ export class CompetitionComponent implements OnInit, OnDestroy {
     findClosestWeek(): { week: PronoWeek | null, index: number } {
       const today = new Date();
       let closestWeek: PronoWeek | null = null;
+      let closestFinishedWeek: PronoWeek | null = null;
       let closestIndex = -1;
+      let closestFinishedIndex = -1;
       let closestTimeDiff = Number.MAX_VALUE;
+      let closestFinishedTimeDiff = Number.MAX_VALUE;
       
       for (let i = 0; i < this.pronoWeeks.length; i++) {
         const event = this.pronoWeeks[i];
         event.pronoDays.forEach(pronoDay => {
+          let allFinished = true;
+          let hasCloser = false;
           pronoDay.matchs?.forEach(match => {
-            if (match && match.dateTime) {
-              const timeDiff = Math.abs(new Date(match.dateTime).getTime() - today.getTime());
-              if (timeDiff < closestTimeDiff) {
-                closestTimeDiff = timeDiff;
-                closestWeek = event;
-                closestIndex = i;
+            if (match) {
+              if (match.state !== 'completed') {
+                allFinished = false;
+              }
+              if (match.dateTime) {
+                const timeDiff = Math.abs(new Date(match.dateTime).getTime() - today.getTime());
+                if (match.state !== 'completed' && timeDiff < closestTimeDiff) {
+                  closestTimeDiff = timeDiff;
+                  // closestWeek = event;
+                  // closestIndex = i;
+                  hasCloser = true;
+                } else {
+                  if (timeDiff < closestFinishedTimeDiff) {
+                    closestFinishedTimeDiff = timeDiff;
+                    hasCloser = true;
+                  }
+                }
               }
             }
           });
+          if (hasCloser && allFinished) {
+            closestFinishedWeek = event;
+            closestFinishedIndex = i;
+          }
+          if (hasCloser && !allFinished) {
+            closestWeek = event;
+            closestIndex = i;
+          }
         });
       }
-      return { week: closestWeek, index: closestIndex };
+      if (closestWeek && closestIndex > -1) {
+        return { week: closestWeek, index: closestIndex };
+      }
+      return { week : closestFinishedWeek, index: closestFinishedIndex };
     }
     
     isLocked(match: Match) {
+      if (match.inProgress) {
+        return true;
+      }
       const today = new Date();
       if (match.teams.length === 2 && (match.teams[0].code === 'TBD' || match.teams[1].code === 'TBD')) {
         return true;
@@ -283,51 +315,55 @@ export class CompetitionComponent implements OnInit, OnDestroy {
             }
           });
         }
-      }, 2000);
+      }, 1500);
     }
     
     randomize() {
-      this.saving = true;
-      const obs: Observable<Pronostic>[] = [];
-      this.currentWeek.pronoDays.forEach(day => {
-        day.matchs?.forEach(match => {
-          if (!this.isLocked(match)) {
-            if (this.userPronos && this.userPronos.scores) {
-              const index = this.userPronos.scores.findIndex(score => score.matchId === match.id);
-              let randomTeam = Math.round(Math.random());
-              let outcome = '';
-              if (match.strategy.count > 1) {
-                outcome = this.getPossibleOutcomes(match.strategy.count)[Math.floor(Math.random() * (match.strategy.count + 1))];
-                const scores = outcome.split('-');
-                const n1 = parseFloat(scores[0]);
-                const n2 = parseFloat(scores[1]);
-                if (n1 > n2) {
-                  randomTeam = 0;
-                } else {
-                  randomTeam = 1;
+      this.dialog.open(RandomValidationComponent).afterClosed().subscribe(result => {
+        if (result) {
+          this.saving = true;
+          const obs: Observable<Pronostic>[] = [];
+          this.currentWeek.pronoDays.forEach(day => {
+            day.matchs?.forEach(match => {
+              if (!this.isLocked(match)) {
+                if (this.userPronos && this.userPronos.scores) {
+                  const index = this.userPronos.scores.findIndex(score => score.matchId === match.id);
+                  let randomTeam = Math.round(Math.random());
+                  let outcome = '';
+                  if (match.strategy.count > 1) {
+                    outcome = this.getPossibleOutcomes(match.strategy.count)[Math.floor(Math.random() * (match.strategy.count + 1))];
+                    const scores = outcome.split('-');
+                    const n1 = parseFloat(scores[0]);
+                    const n2 = parseFloat(scores[1]);
+                    if (n1 > n2) {
+                      randomTeam = 0;
+                    } else {
+                      randomTeam = 1;
+                    }
+                    this.scoreForMatch[match.id] = outcome;
+                  }
+                  if (index > -1) {
+                    if (this.userPronos.scores[index].winner === match.teams[randomTeam].code && this.userPronos.scores[index].score === outcome) {
+                      return;
+                    }
+                    this.userPronos.scores[index].winner = match.teams[randomTeam].code;
+                    this.userPronos.scores[index].score = outcome;
+                  } else {
+                    const matchScore = new MatchScore();
+                    matchScore.matchId = match.id;
+                    matchScore.winner = match.teams[randomTeam].code;
+                    matchScore.score = outcome;
+                    this.userPronos.scores.push(matchScore);
+                  }
                 }
-                this.scoreForMatch[match.id] = outcome;
               }
-              if (index > -1) {
-                if (this.userPronos.scores[index].winner === match.teams[randomTeam].code && this.userPronos.scores[index].score === outcome) {
-                  return;
-                }
-                this.userPronos.scores[index].winner = match.teams[randomTeam].code;
-                this.userPronos.scores[index].score = outcome;
-              } else {
-                const matchScore = new MatchScore();
-                matchScore.matchId = match.id;
-                matchScore.winner = match.teams[randomTeam].code;
-                matchScore.score = outcome;
-                this.userPronos.scores.push(matchScore);
-              }
-            }
-          }
-        });
-      });
-      this.pronoService.setAnswer(this.userPronos, this.dataService.currentUser.userId).subscribe(() => {
-        this.saving = false;
-        this.snackBar.open("Pronostics de 1Head enregistrés", 'x', {duration: 5000});
+            });
+          });
+          this.pronoService.setAnswer(this.userPronos, this.dataService.currentUser.userId).subscribe(() => {
+            this.saving = false;
+            this.snackBar.open("Pronostics de 1Head enregistrés", 'x', {duration: 5000});
+          });
+        }
       });
     }
     

@@ -1,5 +1,17 @@
-<ng-container *ngIf="currentUser">
-    <img [src]="currentUser.profileImageUrl"/>
-    Work in Progress...
-    <button mat-button *ngIf="currentUser.admin" (click)="loadMatchs()">Charger les matchs</button>
-</ng-container>
+<div *ngIf="currentUser" class="profile">
+    <h2>Profil</h2>
+    <div class="user-profile" *ngIf="currentUser.id && currentUser.id === dataService.currentUser.id">
+        Tes groupes : 
+        <div *ngFor="let group of currentUser.groups">
+            {{group.name}}
+        </div>
+        Tes badges : 
+        <div *ngFor="let badge of currentUser.badges">
+            <mat-checkbox [checked]="badge.active" (change)="badge.active = !badge.active"></mat-checkbox>
+            {{badge.label}} <img class="badge" [src]="badge.imageLink"/>
+        </div>
+    </div>
+    <div>
+        <!-- Guest -->
+    </div>
+</div>
