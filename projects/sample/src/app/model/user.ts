@@ -1,5 +1,6 @@
 import { Badge } from "./badge";
 import { Group } from "./group";
+import { UserDiscord } from "./userDiscord";
 
 export interface User {
     id: string;
@@ -11,4 +12,5 @@ export interface User {
     profileImageUrl?: string;
     groups?: Group[];
     badges?: Badge[];
+    discord?: UserDiscord;
 }

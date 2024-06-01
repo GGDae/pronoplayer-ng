@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { StandingsComponent } from './standings.component';
 import { StandingsRoutingModule } from './standings-routing.module';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 
@@ -22,6 +23,7 @@ import { StandingsRoutingModule } from './standings-routing.module';
     MatButtonModule,
     MatIconModule,
     MatSelectModule,
+    MatTooltipModule,
   ]
 })
 export class StandingsModule { }

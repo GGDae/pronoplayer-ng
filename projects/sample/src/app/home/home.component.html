@@ -1,16 +1,26 @@
-<ng-container>
+<ng-container *ngIf="dataService.currentUser else publicView">
     <div *ngIf="!loading">
-        <div class="welcome">
-            <span *ngIf="dataService.currentUser">Bienvenue sur PronoPlayer !</span>
-            <span *ngIf="dataService.currentUser">Si quelqu'un t'a invité via un lien, tu devrais déjà voir un groupe ci-dessous.</span>
-            <span *ngIf="dataService.currentUser">Tu peux cliquer dessus, sélectionner la ou les compétitions ouvertes dans le groupe, et commencer à pronostiquer les prochains matchs !</span>
+        <span *ngIf="!dataService.currentGroup || dataService.showHome" class="title"><img src="assets/images/logo.png">ronoPlayer</span>
+        <div *ngIf="!showBlabla && dataService.currentGroup && !dataService.showHome">
+            <!-- <span class="group-name">{{dataService.currentGroup.name}}</span> -->
+            <ng-container *ngIf="!dataService.currentCompetition">
+                <app-group [groupId]="dataService.currentGroup.id"></app-group>
+            </ng-container>
+            <ng-container *ngIf="dataService.currentCompetition">
+                <app-competition [groupId]="dataService.currentGroup.id" [competitionId]="dataService.currentCompetition.id"></app-competition>
+            </ng-container>
         </div>
-        
-        <div *ngIf="dataService.currentUser">
-            <span class="group-title" *ngIf="dataService.currentUser.groups">Tes groupes :</span>
+        <div class="welcome" *ngIf="showBlabla">
+            <span>Bienvenue sur PronoPlayer !</span>
+            <span>Si quelqu'un t'a invité via un lien, tu devrais déjà voir un groupe ci-dessous.</span>
+            <span>Tu peux cliquer dessus, sélectionner la ou les compétitions ouvertes dans le groupe, et commencer à pronostiquer les prochains matchs !</span>
+        </div>
+        <div *ngIf="!dataService.currentGroup || dataService.showHome">
+            <span class="group-title" *ngIf="dataService.currentUser.groups">Groupes :</span>
             <div class="group-container">
-                <div class="group" *ngFor="let group of dataService.currentUser.groups">
+                <div class="group" *ngFor="let group of dataService.currentUser.groups; let last = last">
                     <span class="group-name" (click)="selectGroup(group)">{{group.name}}</span>
+                    <span *ngIf="!last" class="delimiter">_</span>
                 </div>
             </div>
             <div class="welcome">
@@ -26,4 +36,15 @@
         </div>
     </div>
 </ng-container>
+<ng-template #publicView>
+    <div class="welcome">
+        <span>Sinon, tu peux regarder ce qui se fait de mieux en matière de pronos : </span>
+        <div class="group-container">
+            <div class="group" *ngFor="let group of publicGroups; let last = last">
+                <span class="group-name" (click)="goToRanking(group)">{{group.name}}</span>
+                <span *ngIf="!last" class="delimiter">_</span>
+            </div>
+        </div>
+    </div>
+</ng-template>
 

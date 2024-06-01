@@ -4,3 +4,138 @@
     align-items: center;
     flex-direction: column;
 }
+
+mat-spinner {
+    margin: 20% auto;
+}
+
+.button {
+    cursor: pointer;
+    height: 3rem;
+    font-size: 1.5rem;
+    background-color: var(--btn-bkg-color) !important;
+    color: white;
+    margin-top: 2rem;
+}
+
+
+.user-profile {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .manage {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding-bottom: 20px;
+        
+        .competitions {
+            display: flex;
+            flex-direction: column;
+            
+            .competition {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                grid-gap: 10px;
+                border-top: 2px solid #ccc;
+                padding: 8px;
+                
+                &.no-border {
+                    border-top: none;
+                }
+            }
+        }
+    }
+    
+    .discord {
+        padding: 5% 0;
+        
+        .no-code {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            .generate-code {
+                display: flex;
+                align-items: center;
+                .discord-logo {
+                    width: 50px;
+                }
+            }
+        }
+        
+        .example {
+            background-color: #99889d;
+            cursor: pointer;
+        }
+    }
+    
+    .badges {
+        max-width: 50%;
+    }
+    
+    .badge-title {
+        font-size: 1.5rem;
+        padding-bottom: 2rem;
+    }
+    .badge-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        
+        .badge {
+            width: 60px;
+        }
+        
+        .checkbox {
+            pointer-events: none;
+        }
+    }
+}
+
+.saving-indicator {
+    position: fixed;
+    z-index: 2;
+}
+
+@media(max-width: 599px) {
+    .saving-indicator {
+        top: 56px;
+    }
+    .profile {
+        font-size: 1.2rem;
+        padding: 1rem .6rem;
+    }
+    .badge-container {
+        gap: 1rem;
+    }
+    .discord {
+        .example {
+            padding: 2px;
+            border-radius: 20px;
+            white-space: break-spaces;
+        }
+    }
+}
+@media(min-width: 600px) {
+    .saving-indicator {
+        top: 64px;
+    }
+    .profile {
+        font-size: 1.5rem;
+        padding: 1em 3em;
+    }
+    .badge-container {
+        gap: 2rem;
+    }
+    .discord {
+        .example {
+            padding: 15px;
+            border-radius: 20px;
+        }
+    }
+}

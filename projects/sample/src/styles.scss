@@ -1,6 +1,66 @@
 /* You can add global styles to this file, and also import other style files */
-@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+@import '~@angular/material/theming';
+@include mat-core();
+
+$light-app-theme: mat-light-theme((
+color: (
+primary: mat-palette($mat-deep-purple),
+accent: mat-palette($mat-amber, A200, A100, A400),
+warn: mat-palette($mat-red),
+)
+));
+
+$dark-app-theme: mat-dark-theme((
+color: (
+primary: mat-palette($mat-deep-purple),
+accent: mat-palette($mat-blue-gray, A200, A100, A400),
+warn: mat-palette($mat-amber),
+)
+));
+
+@include angular-material-theme($light-app-theme);
+
 body {
-    font-family: 'Roboto', sans-serif; /* Change 'Roboto' to the desired font name */
-    background-color: lightsteelblue;
+        font-family: 'Roboto', sans-serif; /* Change 'Roboto' to the desired font name */
+        background-color: lightsteelblue;
+        --bkg-color: lightsteelblue;
+        --bkg-color-transparent: #b0c4dee3;
+        --secondary-bkg-color: #673ab761;
+        --sidenav-color: #673ab7;
+        --btn-bkg-color: #673ab7;
+        --btn-won-color: #a67ded;
+        --bad-result-color: #b598e6;
+        --team-border-color: grey;
+        --bkg-opacity: 100%;
+        --img-filter: contrast(1);
+}
+
+body.dark-mode {
+        @include angular-material-color($dark-app-theme);
+        --bkg-color: #222223;
+        --bkg-color-transparent: #222223e8;
+        --secondary-bkg-color: #673ab78f;
+        --sidenav-color: #673ab7;
+        --btn-bkg-color: #422674;
+        --btn-won-color: #5f4789;
+        --bad-result-color: #746293;
+        --team-border-color: #d5c5c5;
+        --bkg-opacity: 50%;
+        --img-filter: contrast(0.5);
+        background-color: var(--bkg-color);
+        
+        .mat-primary {
+                .mat-option.mat-selected {
+                        color: #bba3e7 !important;
+                }
+        }
+        
+        .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+                border-color: #a78e2e;
+        }
+        
+        .mat-radio-button.mat-accent .mat-radio-inner-circle {
+                background-color: #a78e2e;
+        }
 }

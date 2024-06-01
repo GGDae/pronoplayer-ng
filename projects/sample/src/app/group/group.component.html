@@ -1,5 +1,6 @@
 <div *ngIf="dataService.currentUser">
-    <button class="go-back" mat-icon-button (click)="goBack()"><mat-icon>arrow_left</mat-icon></button>
+    <app-breadcrumb></app-breadcrumb>
+    <mat-spinner *ngIf="loading"></mat-spinner>
     <div class="competitions" *ngIf="!currentCompetition">
         <span class="competition" [style.background-color]="competition.color" (click)="selectCompetition(competition)" *ngFor="let competition of competitions">
             {{competition.name}}

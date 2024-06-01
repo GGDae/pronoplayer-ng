@@ -1,5 +1,5 @@
-.container {
-    margin-bottom: 5%;
+mat-spinner {
+    margin: 20% auto;
 }
 
 .invisible {
@@ -24,16 +24,24 @@
     }
 }
 
+.pronoday {
+    scroll-margin-top: 100px;
+}
+
 .saving-indicator {
     position: fixed;
+    z-index: 2;
 }
 
 @media(min-width: 600px) {
+    .current-competition {
+        padding-top: 80px;
+    }
     .saving-indicator {
         top: 64px;
     }
     .selection {
-        max-width: 900px;
+        margin-top: 42px !important;
     }
     .prono-line {
         grid-template-columns: 1fr 0fr 1fr;
@@ -43,15 +51,20 @@
     }
     .wins {
         font-size: 2rem;
+        font-weight: 500;
     }
     .coin {
         width: 100px;
     }
     .team-name {
         width: 5rem;
+        line-height: 1rem;
     }
 }
 @media(max-width: 599px) {
+    .current-competition {
+        padding-top: 18%;
+    }
     .saving-indicator {
         top: 56px;
     }
@@ -62,6 +75,7 @@
     
     .wins {
         font-size: 1.5rem;
+        font-weight: 500;
     }
     
     .coin {
@@ -72,6 +86,9 @@
 
 .coin {
     margin-top: 1rem;
+    cursor: pointer;
+}
+.cursor-pointer {
     cursor: pointer;
 }
 .prono-line {
@@ -111,14 +128,18 @@
             align-items: center;
             justify-content: space-around;
             gap: .3rem;
-            border: 1px solid grey;
+            border: 1px solid var(--team-border-color);
             border-radius: 12px;
             height: 4em;
-            background-color: lightsteelblue;
+            background-color: var(--bkg-color);
+
+            .locked {
+                opacity: 0.75;
+            }
             
             &.bad-result {
                 opacity: 0.6;
-                background-color: #b598e6 !important;
+                background-color: var(--bad-result-color) !important;
             }
             
             &.best-of {
@@ -134,7 +155,7 @@
             }
             
             &.won {
-                background-color: #a67ded;
+                background-color: var(--btn-won-color);
                 border-radius: 12px;
             }
             
@@ -144,6 +165,10 @@
             
             .team-logo {
                 width: 3em;
+                
+                &.tbd {
+                    filter: var(--img-filter);
+                }
             }
             
             .with-padding {
@@ -157,6 +182,16 @@
 }
 .team-name {
     font-weight: bold;
+    
+    &.small {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        
+        .small-records {
+            font-weight: normal;
+        }
+    }
 }
 .day-selection {
     display: flex;
@@ -170,20 +205,25 @@
 .selection {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: calc(100vw - 24px);
+    justify-content: center;
+    width: 100vw;
+    position: fixed;
+    margin-top: 9%;
+    background-color: var(--bkg-color-transparent);
+    border-radius: 0 0 20px 20px;
+    z-index: 1;
     
     .week-arrow {
         transform: scale(2);
     }
     
-    &.block {
-        padding-top: 3rem;
-    }
+    
     .week-number {
         white-space: nowrap; 
         overflow: hidden; 
         font-size: 2rem;
+        width: 680px;
+        text-align: center;
     }
 }
 

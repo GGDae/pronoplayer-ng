@@ -6,7 +6,7 @@ import { DataService } from '../services/data.service';
 import { Competition } from '../model/competition';
 import { Group } from '../model/group';
 import { GroupService } from '../services/group.service';
-import { catchError, of } from 'rxjs';
+import { catchError, map, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -21,6 +21,9 @@ export class HomeComponent implements OnInit {
   public userId!: string;
   public competitions!: Competition[];
   public groupIdToJoin = "";
+  public showBlabla = true;
+  // public groupChoice = false;
+  public publicGroups!: Group[];
   
   @ViewChild('sidenav') sidenav!: MatSidenav;
   
@@ -34,13 +37,47 @@ export class HomeComponent implements OnInit {
     }
     
     ngOnInit() {
+      this.groupService.getPublicGroups().subscribe(groups => {
+        if (groups) {
+          this.publicGroups = groups;
+        }
+      });
       this.dataService.loadingSubject.subscribe(loading => {
         this.loading = loading;
       });
+      this.dataService.clearBreadcrumb();
+      this.dataService.addBreadcrumbItem('Accueil', '/home');
+      if (this.dataService.currentGroup) {
+        this.dataService.addBreadcrumbItem(this.dataService.currentGroup.name, `/grp/${this.dataService.currentGroup.id}`);
+      }
+      if (this.dataService.currentGroup && this.dataService.currentCompetition) {
+        this.dataService.addBreadcrumbItem(this.dataService.currentCompetition.name, `/grp/${this.dataService.currentGroup.id}/${this.dataService.currentCompetition.id}`);
+      }
+      this.showBlabla = !this.dataService.currentGroup;
+    }
+
+    goToRanking(group: Group) {
+      this.dataService.guestMode = true;
+      sessionStorage.setItem('publicGroups', JSON.stringify(this.publicGroups));
+      sessionStorage.setItem('guestGroup', JSON.stringify(group));
+      this.router.navigate(['ranking']);
+    }
+    
+    goToPronos() {
+      this.dataService.showHome = false;
+      if (this.dataService.currentGroup && this.dataService.currentCompetition && this.dataService.breadcrumbItems.length === 3) {
+        this.router.navigate([`grp/${this.dataService.currentGroup.id}/${this.dataService.currentCompetition.id}`]);
+      } else if (this.dataService.currentGroup) {
+        this.router.navigate([`grp/${this.dataService.currentGroup.id}`]);
+      }
     }
     
     selectGroup(selectedGroup: Group) {
+      this.dataService.showHome = false;
       this.dataService.currentGroup = selectedGroup;
+      this.dataService.clearBreadcrumb();
+      this.dataService.addBreadcrumbItem('Accueil', '/home');
+      this.dataService.addBreadcrumbItem(selectedGroup.name, `/grp/${selectedGroup.id}`);
       this.router.navigate([`/grp/${selectedGroup.id}`]);
     }
     
@@ -51,6 +88,9 @@ export class HomeComponent implements OnInit {
       })).subscribe((group) => {
         if (group) {
           this.dataService.currentGroup = group;
+          this.dataService.clearBreadcrumb();
+          this.dataService.addBreadcrumbItem('Accueil', '/home');
+          this.dataService.addBreadcrumbItem(group.name, `/grp/${group.id}`);
           this.router.navigate([`grp/${group.id}`]);
         }
       });

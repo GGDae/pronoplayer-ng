@@ -3,8 +3,8 @@ import { Team } from "./team";
 
 export class Match {
     id!: string;
-    dateTime?: Date;
-    inProgress?: boolean;
+    dateTime!: Date;
+    locked?: boolean;
     result?: string;
     score!: string;
     state!: string;

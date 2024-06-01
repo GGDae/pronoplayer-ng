@@ -1,0 +1,39 @@
+nav {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-weight: 500;
+    width: 100%;
+    background-color: var(--bkg-color);
+    z-index: 1;
+}
+
+.label {
+    word-spacing: normal !important;
+    cursor: pointer;
+    
+    &.not-last {
+        text-decoration: underline;
+    }
+}
+
+@media(max-width: 599px) {
+    nav {
+        text-align: center;
+        word-spacing: .5em;
+        top: 56px;
+        height: 4%;
+        padding-top: 2%;
+    }
+}
+
+@media(min-width: 600px) {
+    nav {
+        text-align: center;
+        font-size: 18px;
+        padding: 10px 0;
+        word-spacing: 1.8em;
+        top: 64px;
+    }
+}

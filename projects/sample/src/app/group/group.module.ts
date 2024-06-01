@@ -12,6 +12,7 @@ import { JoinComponent } from './join/join.component';
 import { ManageComponent } from './manage/manage.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         GroupComponent,
         JoinComponent,
         ManageComponent,
+        BreadcrumbComponent,
     ],
     imports: [
         CommonModule,
@@ -31,6 +33,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         MatSelectModule,
         MatCheckboxModule,
         MatProgressSpinnerModule,
+    ],
+    exports: [
+        BreadcrumbComponent,
+        GroupComponent,
     ],
     providers: [
         DatePipe,

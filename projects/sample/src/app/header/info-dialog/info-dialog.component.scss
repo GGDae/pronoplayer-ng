@@ -1,0 +1,10 @@
+.mat-dialog-title, .mat-dialog-content, .mat-dialog-actions {
+    justify-content: center;
+    text-align: left;
+    font-size: 16px;
+}
+
+.mat-button {
+    background-color: var(--btn-bkg-color);
+    color: white;
+}

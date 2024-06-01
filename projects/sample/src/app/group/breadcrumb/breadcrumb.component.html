@@ -1,0 +1,10 @@
+<nav>
+    <ng-container *ngFor="let item of dataService.breadcrumbItems; let first = first, let last = last">
+        <ng-container *ngIf="!last">
+            <a (click)="goToLink(item.url, first)" class="label not-last">{{item.label}}</a> >
+        </ng-container>
+        <ng-container *ngIf="last">
+            <span class="label">{{item.label}}</span>
+        </ng-container>
+    </ng-container>
+</nav>

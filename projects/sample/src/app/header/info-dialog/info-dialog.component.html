@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Informations</h2>
+<mat-dialog-content>
+    <p>
+        Les matchs sont récupérés et mis à jour de manière automatique via le site de Riot Games LOLESPORTS.
+    </p>
+    <p>
+        Un bot discord fait les rappels des matchs la veille de chaque journée, pour les compétitions (paramétrable pour les gestionnaires de groupe).<br>
+        Pour paramétrer le bot sur un serveur discord, contacter @ggdae.
+    </p>
+    <p>
+        NOUVEAU : Il peut également vous MP sur discord ! Rendez-vous dans votre profil, en haut à droite.<br>
+    </p>
+    <p> 
+        Les pronostics pour un match sont verrouillés soit :
+    </p>
+    <ul>
+        <li>à l'heure annoncée (que le match ait commencé ou non)</li>
+        <li>lorsque le match commence ("en cours" sur lolesports)</li>
+        <li>s'il existe un match précédent : lorsque le match précédent a eu son résultat.</li>
+    </ul>
+    <p>
+        GL HF !
+    </p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="onValidate()">Fermer</button>
+</mat-dialog-actions>

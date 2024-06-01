@@ -2,25 +2,30 @@
     margin-bottom: 5%;
 }
 
+mat-spinner {
+    margin: 20% auto;
+}
+
 .competitions {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 2rem;
-    padding: 8vh 0;
 }
 
 .competition {
     display: flex;
     justify-content: center;
+    color: rgba(0,0,0,.87);
     border: 2px solid rgb(23, 23, 85);
     border-radius: 14px;
     background-color: rgb(151, 181, 238);
+    opacity: var(--bkg-opacity);
     user-select: none;
     text-align: center;
     text-wrap: balance;
-
+    
     &:hover {
         background-color: #9abae2;
         cursor: pointer;
@@ -31,12 +36,18 @@
     }
 }
 @media(min-width: 600px) {
+    .competitions {
+        padding: calc(7vh + 64px) 0;
+    }
     .competition {
         font-size: 4rem;
         padding: .5rem .5em;
     }
 }
 @media(max-width: 599px) {
+    .competitions {
+        padding: 8vh 0;
+    }
     .competition {
         width: 80vw;
         font-size: 2rem;

@@ -1,4 +1,4 @@
-<div class="standing-choice" *ngIf="dataService.currentUser">
+<div class="standing-choice">
     <mat-form-field class="field" *ngIf="competitions">
         <mat-select [(value)]="competition" (selectionChange)="selectCompetition()">
             <mat-option *ngFor="let comp of competitions" [value]="comp">
@@ -17,52 +17,56 @@
     </mat-form-field>
 </div>
 <ng-container class="standing" *ngIf="standing && currentStage">
-    <ng-container *ngFor="let section of currentStage.sections">
-        <div class="section">
-            <span class="section-name">{{section.name | titlecase }}</span>
-            <div class="grid" *ngIf="section.rankings.length > 0">
-                <div class="grid-header">
-                    <span class="grid-item"></span>
-                    <span class="grid-item">Équipe</span>
-                    <span class="grid-item">Victoires</span>
-                    <span class="grid-item">Défaites</span>
-                </div>
-                <ng-container *ngFor="let ranking of section.rankings">
-                    <div class="grid-container" *ngFor="let team of ranking.teams">
-                        <span class="grid-item" *ngIf="team.code !== 'TBD'">{{ranking.ordinal}}</span>
-                        <span class="grid-item" *ngIf="team.code === 'TBD'">-</span>
-                        <span class="grid-item name">
-                            <img class="team-logo" [src]="team.code !== 'TBD' ? team.image : 'assets/images/team-tbd.png'">
-                            <ng-container *ngIf="!smallScreen">{{team.name}}</ng-container>
-                            <ng-container *ngIf="smallScreen">{{team.code}}</ng-container>
-                        </span>
-                        <span class="grid-item" *ngIf="team.record">{{team.record.wins}}</span>
-                        <span class="grid-item" *ngIf="team.record">{{team.record.losses}}</span>
-                        <span class="grid-item" *ngIf="team.code === 'TBD'">-</span>
-                        <span class="grid-item" *ngIf="team.code === 'TBD'">-</span>
+    <div class="sections" [ngClass]="{'ranking-display' : currentStage.sections.length > 1 && currentStage.sections[0].rankings.length > 0}">
+        <ng-container *ngFor="let section of currentStage.sections">
+            <div class="section">
+                <span class="section-name">{{section.name | titlecase }}</span>
+                <div class="grid" *ngIf="section.rankings.length > 0">
+                    <div class="grid-header">
+                        <span class="grid-item"></span>
+                        <span class="grid-item">Équipe</span>
+                        <span class="grid-item">Victoires</span>
+                        <span class="grid-item">Défaites</span>
                     </div>
-                </ng-container>
+                    <ng-container *ngFor="let ranking of section.rankings">
+                        <div class="grid-container" *ngFor="let team of ranking.teams">
+                            <span class="grid-item" *ngIf="team.code !== 'TBD'">{{ranking.ordinal}}</span>
+                            <span class="grid-item" *ngIf="team.code === 'TBD'">-</span>
+                            <span class="grid-item name">
+                                <img class="team-logo" [ngClass]="{'tbd': team.code === 'TBD'}" [src]="team.code !== 'TBD' ? team.image : 'assets/images/team-tbd.png'">
+                                <span class="team-name" *ngIf="!smallScreen" [matTooltip]="team.name">{{team.name}}</span>
+                                <span *ngIf="smallScreen" [matTooltip]="team.name">{{team.code}}</span>
+                            </span>
+                            <span class="grid-item" *ngIf="team.record">{{team.record.wins}}</span>
+                            <span class="grid-item" *ngIf="team.record">{{team.record.losses}}</span>
+                            <span class="grid-item" *ngIf="team.code === 'TBD'">-</span>
+                            <span class="grid-item" *ngIf="team.code === 'TBD'">-</span>
+                        </div>
+                    </ng-container>
+                </div>
             </div>
-        </div>
-        <div class="columns" *ngIf="section.columns.length > 0">
-            <div class="column" *ngFor="let column of section.columns">
-                <div class="cell" *ngFor="let cell of column.cells">
-                    <span class="cell-name">{{cell.name}}</span>
-                    <div class="matches-container">
-                        <div class="match" *ngFor="let match of cell.matches">
-                            <div class="team-container" *ngFor="let team of match.teams">
-                                <span class="team" [ngClass]="{'won': team.result && team.result.outcome === 'win', 'lost': team.result && team.result.outcome ==='loss'}">
-                                    <img class="team-logo" [src]="team.code !== 'TBD' ? team.image : 'assets/images/team-tbd.png'">
-                                    <span class="team-name" *ngIf="!smallScreen">{{team.name}}</span>
-                                    <span class="team-name" *ngIf="smallScreen">{{team.code}}</span>
-                                    <span class="wins" *ngIf="team.result">{{team.result.gameWins}}</span>
-                                    <span class="wins" *ngIf="team.code === 'TBD'">-</span>
-                                </span>
+            <div class="columns" *ngIf="section.columns.length > 0">
+                <div class="column" *ngFor="let column of section.columns">
+                    <div class="cell" *ngFor="let cell of column.cells">
+                        <span *ngIf="!smallScreen" class="cell-name">{{cell.name}}</span>
+                        <div class="matches-container">
+                            <div class="match" *ngFor="let match of cell.matches">
+                                <div class="team-container" *ngFor="let team of match.teams">
+                                    <span class="team" [ngClass]="{'won': team.result && team.result.outcome === 'win', 'lost': team.result && team.result.outcome ==='loss'}">
+                                        <img class="team-logo" [ngClass]="{'tbd': team.code === 'TBD'}" [src]="team.code !== 'TBD' ? team.image : 'assets/images/team-tbd.png'">
+                                        <span class="team-name" *ngIf="!smallScreen">{{team.name}}</span>
+                                        <span class="team-name" *ngIf="smallScreen">{{team.code}}</span>
+                                        <span class="wins" *ngIf="team.result">{{team.result.gameWins}}</span>
+                                        <span class="wins" *ngIf="team.code === 'TBD'">-</span>
+                                    </span>
+                                </div>
+                                <span *ngIf="!smallScreen"class="date-time">{{match.dateTime | date: 'dd/MM/YY HH:mm'}}</span>
+                                <span *ngIf="smallScreen"class="date-time">{{match.dateTime | date: 'dd/MM HH:mm'}}</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </ng-container>
+        </ng-container>
+    </div>
 </ng-container>

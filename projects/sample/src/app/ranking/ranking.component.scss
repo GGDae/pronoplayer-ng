@@ -14,39 +14,64 @@
     .field {
         text-align: center;
     }
+
+    .divider {
+        margin-top: -10px;
+        margin-bottom: 2px;
+    }
+
+    .user-rank {
+        background-color: var(--secondary-bkg-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        font-size: 14px;
+        color: inherit;
+        border-top: 2px solid rgba(0,0,0,0.35);
+        opacity: 0.85;
+    }
     
-    .ranking-table {
-        
-        .rank {
-            font-weight: bold;
-            
-            &.inside-medal {
-                position: absolute;
-                margin-top: 18px;
-                margin-left: -23.8px;
-            }
+    .self {
+        background-color: var(--secondary-bkg-color);
+    }
+    
+    .rank {
+        font-weight: bold;
+        &.rank-below::before {
+            content: ">>";
+            display: block;
+            -webkit-transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            transform: rotate(90deg);
         }
-        
-        .medal {
-            width: 40px;
-        }
-        .mat-header-cell {
-            text-align: center;
-        }
-        
-        .avatar-cell {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .badge-span {
-            display: flex;
+        &.inside-medal {
+            position: absolute;
+            margin-top: 18px;
+            margin-left: -23.8px;
         }
     }
     
+    .medal {
+        width: 40px;
+    }
+    .mat-header-cell {
+        text-align: center;
+    }
+    
+    .avatar-cell {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    
+    .badge-span {
+        display: flex;
+    }
+    
     .paginator {
-        background-color: lightsteelblue;
+        background-color: var(--bkg-color);
         display: none;
         
         &.show {
@@ -56,7 +81,7 @@
     
     
     .mat-table {
-        background-color: lightsteelblue;
+        background-color: var(--bkg-color);
     }
     
     .avatar {
@@ -68,6 +93,10 @@
         border-radius: 50%;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     }
+    
+    .points {
+        font-weight: 500;
+    }
 }
 
 @media(min-width: 600px) {
@@ -76,27 +105,64 @@
     }
     .ranking-table {
         width: 60vw;
+        max-width: 1024px;
+    }
+    .user-rank {
+        width: 60vw;
+        max-width: 1024px;
+
+        .name {
+            width: 14%;
+        }
+        
+        .score {
+            padding-right: 3.5%;
+        }
     }
     .paginator {
         width: 60vw;
+        max-width: 1024px;
     }
     .badge-span {
         width: 45px;
     }
+    .points {
+        padding-right: 10px;
+    }
 }
 @media(max-width: 599px) {
+    tr.mat-header-row {
+        height: 30px;
+    }
     .field {
         width: 80%;
     }
     
     .ranking-table {
-        width: 90vw;
+        width: 100vw;
+    }
+    .user-rank {
+        width: 100vw;
+        
+        .name {
+            width: 23vw;
+        }
+        
+        .score {
+            padding-right: 6vw;
+        }
     }
     .paginator {
         width: 90vw;
     }
     .badge-span {
         width: 40px;
+    }
+    .points {
+        padding-right: 3px;
+    }
+    td.mat-cell:first-of-type {
+        padding-left: 4px;
     }
 }
 

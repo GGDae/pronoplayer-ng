@@ -31,9 +31,28 @@ export class AppComponent implements OnInit, OnDestroy{
     private userService: UserService,
     private dialog: MatDialog,
     private swUpdate: SwUpdate) {
+      this.swUpdate.versionUpdates.subscribe(async evt => {
+        switch (evt.type) {
+            case 'VERSION_DETECTED':
+                console.log(`Downloading new app version: ${evt.version.hash}`);
+                break;
+            case 'VERSION_READY':
+                console.log(`Current app version: ${evt.currentVersion.hash}`);
+                console.log(`New app version ready for use: ${evt.latestVersion.hash}`);
+                this.dialog.open(RefreshDialogComponent).afterClosed().subscribe(result => {
+                  if (result) {
+                    window.location.reload();
+                  }
+                });
+                break;    
+            case 'VERSION_INSTALLATION_FAILED':
+                console.log(`Failed to install app version '${evt.version.hash}': ${evt.error}`);
+                break;
+        }
+    });
       this.intervalId = setInterval(() => {
         this.checkForUpdates();
-      }, 120000);
+      }, 240000);
     }
     
     private checkForUpdates() {
@@ -56,7 +75,13 @@ export class AppComponent implements OnInit, OnDestroy{
     }
     
     ngOnInit() {
+      if (this.dataService.theme === 'dark') {
+        document.body.classList.toggle('dark-mode');
+      }
       let baseUrl = '';
+      if (this.dataService.currentUser) {
+        this.dataService.guestMode = false;
+      }
       const urlParams : {key: string, value: string}[] = [];
       if (window.location.search && !this.dataService.currentUser) {
         if (window.location.search !== '?') {
@@ -120,6 +145,15 @@ export class AppComponent implements OnInit, OnDestroy{
       this.sidenav.toggle();
       this.router.navigate(['standings']);
     }
+
+    goToPronos() {
+      this.sidenav.toggle();
+      if (this.dataService.currentGroup && this.dataService.currentCompetition && this.dataService.breadcrumbItems.length === 3) {
+        this.router.navigate([`grp/${this.dataService.currentGroup.id}/${this.dataService.currentCompetition.id}`]);
+      } else if (this.dataService.currentGroup) {
+        this.router.navigate([`grp/${this.dataService.currentGroup.id}`]);
+      }
+    }
     
     toggleSidenav() {
       this.sidenav.toggle();
@@ -135,8 +169,15 @@ export class AppComponent implements OnInit, OnDestroy{
       this.dataService.currentUser = user;
       this.currentUser = user;
       this.loading = false;
+      this.dataService.guestMode = false;
       this.dataService.loadingSubject.next(false);
       this.dataService.loginSubject.next(true);
+    }
+
+    disconnect() {
+      this.dataService.clear();
+      this.closeSidenav();
+      this.router.navigate(['']);
     }
   }
   

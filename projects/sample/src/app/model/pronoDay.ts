@@ -1,7 +1,9 @@
 import { Match } from "./match";
 
 export class PronoDay {
-    date?: Date;
+    date!: Date;
     day!: number;
     matchs?: Match[];
+    finished!: boolean;
+    show!: boolean;
 }

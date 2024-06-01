@@ -1,14 +1,14 @@
-<div *ngIf="dataService.currentUser">
-    <button class="go-back" mat-icon-button (click)="goBack()"><mat-icon>arrow_left</mat-icon></button>
+<div class="container" *ngIf="dataService.currentUser">
+    <app-breadcrumb></app-breadcrumb>
     <mat-progress-bar class="saving-indicator" *ngIf="needSaving || saving" mode="indeterminate"></mat-progress-bar>
+    <mat-spinner *ngIf="loading"></mat-spinner>
+    <div class="selection block" *ngIf="currentWeek">
+        <button mat-icon-button [ngClass]="{'invisible' : currentIndex === 0}" (click)="getPreviousWeek()"><mat-icon class="week-arrow">keyboard_arrow_left</mat-icon></button>
+        <span class="week-number">{{currentWeek.block | titlecase}}</span>
+        <button mat-icon-button [ngClass]="{'invisible' : currentIndex >= pronoWeeks.length - 1}" (click)="getNextWeek()"><mat-icon class="week-arrow">keyboard_arrow_right</mat-icon></button>
+    </div>
     <div class="current-competition" [ngClass]="{'with-padding': !showCoin}" *ngIf="currentWeek else noData">
-        <div class="selection block">
-            <button mat-icon-button [ngClass]="{'invisible' : currentIndex === 0}" (click)="getPreviousWeek()"><mat-icon class="week-arrow">keyboard_arrow_left</mat-icon></button>
-            <span class="week-number">{{currentWeek.block}}</span>
-            <button mat-icon-button [ngClass]="{'invisible' : currentIndex >= pronoWeeks.length - 1}" (click)="getNextWeek()"><mat-icon class="week-arrow">keyboard_arrow_right</mat-icon></button>
-        </div>
-        
-        <div *ngFor="let day of currentWeek.pronoDays" (swipeLeft)="getPreviousWeek()" (swipeRight)="getNextWeek()">
+        <div *ngFor="let day of currentWeek.pronoDays" class="pronoday" id="day{{day.day}}" (swipeLeft)="getPreviousWeek()" (swipeRight)="getNextWeek()">
             <div class="day-selection">
                 <span class="day-number">Jour {{day.day}} : {{day.date}}</span>
             </div>
@@ -17,12 +17,15 @@
                     <ng-container *ngFor="let team of match.teams, let j = index">
                         <div class="team-container" [ngClass]="{'inverted' : j % 2 === 1}">
                             <span class="team" [ngClass]="{'inverted' : j % 2 === 0, 'won': match.result === team.code, 'lost': match.result && match.result !== team.code, 'pointer': match.strategy.count === 1,'best-of': match.strategy.count > 1, 'bad-result' : match.result === team.code && !isTeamSelected(match, team)}" (click)="selectTeam(match, team)">
-                                <mat-radio-button *ngIf="match.strategy.count === 1" [disabled]="isLocked(match)" [ngClass]="{'with-padding': j % 2 === 1}" [checked]="isTeamSelected(match, team)" [value]="team.code"></mat-radio-button>
-                                <img class="team-logo" [src]="team.code !== 'TBD' ? team.image : 'assets/images/team-tbd.png'">
+                                <mat-radio-button *ngIf="match.strategy.count === 1" [disabled]="isLocked(match)" [ngClass]="{'with-padding': j % 2 === 1, 'locked': isLocked(match)}" [checked]="isTeamSelected(match, team)" [value]="team.code"></mat-radio-button>
+                                <img class="team-logo" [ngClass]="{'tbd': team.code === 'TBD'}" [src]="team.code !== 'TBD' ? team.image : 'assets/images/team-tbd.png'">
                                 <span class="team-name" *ngIf="!smallScreen">{{team.name}}</span>
-                                <span class="team-name" *ngIf="smallScreen">{{team.code}}</span>
-                                <span class="records" *ngIf="!smallScreen && match.strategy.count === 1">({{team.record.wins}} - {{team.record.losses}})</span>
-                                <span *ngIf="match.strategy.count > 1 && match.result" class="wins">{{team.result.gameWins}}</span>
+                                <div class="team-name small" *ngIf="smallScreen">
+                                    <span>{{team.code}}</span>
+                                    <span class="small-records" *ngIf="match.strategy.count === 1 && team.record">({{team.record.wins}} - {{team.record.losses}})</span>
+                                </div>
+                                <span class="records" *ngIf="!smallScreen && match.strategy.count === 1 && team.record">({{team.record.wins}} - {{team.record.losses}})</span>
+                                <span *ngIf="match.strategy.count > 1 && team.result && team.result.gameWins !== undefined && (match.result || isLocked(match))" class="wins">{{team.result.gameWins}}</span>
                             </span>
                         </div>
                         <div class="date-score" *ngIf="j === 0">

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { Competition } from '../model/competition';
 import { CompetitionService } from '../services/competition.service';
@@ -15,6 +15,8 @@ export class GroupComponent implements OnInit {
   
   public competitions!: Competition[];
   public currentCompetition!: Competition;
+  public loading = false;
+  @Input() public groupId!: string;
   
   constructor(public dataService: DataService,
     protected competitionService: CompetitionService,
@@ -26,13 +28,19 @@ export class GroupComponent implements OnInit {
     }
     
     ngOnInit(): void {
-      const groupId = this.route.snapshot.paramMap.get('id');
+      const groupId = this.groupId || this.route.snapshot.paramMap.get('id');
+      if (this.dataService.breadcrumbItems.length > 2) {
+        this.dataService.breadcrumbItems = this.dataService.breadcrumbItems.slice(0, 2);
+      }
       if (this.dataService.currentUser) {
+        this.loading = true;
         if (groupId) {
           this.groupService.getGroup(groupId).subscribe(group => {
             this.dataService.currentGroup = group;
+            this.dataService.refreshBreadcrumbsGroup();
             this.competitionService.getAllByIds(group.competitions).subscribe(competitions => {
               this.competitions = competitions.filter(comp => comp.current);
+              this.loading = false;
               this.cd.markForCheck();
             });
           });
@@ -41,6 +49,7 @@ export class GroupComponent implements OnInit {
     }
     
     selectCompetition(competition: Competition) {
+      this.dataService.addBreadcrumbItem(competition.name, `grp/${this.dataService.currentGroup.id}/${competition.id}`);
       this.router.navigate([`grp/${this.dataService.currentGroup.id}/${competition.id}`]);
     }
     

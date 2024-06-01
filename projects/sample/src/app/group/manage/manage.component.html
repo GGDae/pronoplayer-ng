@@ -8,15 +8,20 @@
         </mat-form-field>
         
         <div class="competitions" *ngIf="group && competitions">
+            <div class="competition no-border">
+                <span>Compétition</span>
+                <span>Activer les pronos</span>
+                <span>Activer les rappels Discord</span>
+            </div>
             <div class="competition" *ngFor="let competition of competitions">
+                <span>{{competition.name}} {{competition.year}} {{competition.split}}</span>
                 <mat-checkbox [checked]="isCompetitionInGroup(competition)" (change)="addOrRemoveCompetition(competition, $event)"></mat-checkbox>
-                {{competition.name}}
-                {{competition.year}}
-                {{competition.split}}
+                <mat-checkbox [checked]="areNotificationEnabled(competition)" (change)="addOrRemoveNotification(competition, $event)"></mat-checkbox>
             </div>
         </div>
         <button class="invite-button" mat-button (click)="getInviteId()">Copier l'url d'invitation</button>
     </ng-container>
     
-    <div class="center" *ngIf="!loading && (!groups || groups.length < 1)">Tu n'as aucun groupe à gérer !</div>
+    <div class="center" *ngIf="!loading && (!groups || groups.length < 1) && dataService.currentUser">Tu n'as aucun groupe à gérer !</div>
+    <div class="center" *ngIf="!loading && !dataService.currentUser">Connecte-toi pour voir tes groupes ou en rejoindre un !</div>
 </div>

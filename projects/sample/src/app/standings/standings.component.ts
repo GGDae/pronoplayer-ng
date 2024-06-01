@@ -46,7 +46,7 @@ export class StandingsComponent implements OnInit {
     }
     
     selectCompetition() {
-      this.dataService.currentCompetition = this.competition;
+      // this.dataService.currentCompetition = this.competition;
       this.competitionService.getStandings(this.competition.id).subscribe(standing => {
         this.standing = standing;
         if (this.standing.stages && this.standing.stages.length > 0) {

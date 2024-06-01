@@ -73,4 +73,28 @@ export class GroupService {
     });
     return this.http.get<Group>(url, { headers });
   }
+    
+  addDiscordNotificationForCompetition(groupId: string, competitionId: string, userId: string) {
+    const url = `api/group/${groupId}/addNotification?competitionId=${competitionId}&userId=${userId}`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+      'refreshToken': `${localStorage.getItem('refreshToken')}`
+    });
+    return this.http.get<Group>(url, { headers });
+  }
+  
+  removeDiscordNotificationForCompetition(groupId: string, competitionId: string, userId: string) {
+    const url = `api/group/${groupId}/removeNotification?competitionId=${competitionId}&userId=${userId}`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+      'refreshToken': `${localStorage.getItem('refreshToken')}`
+    });
+    return this.http.get<Group>(url, { headers });
+  }
+
+  getPublicGroups(): Observable<Group[]> {
+    const url = `api/group/public`;
+    return this.http.get<Group[]>(url);
+  }
+
 }

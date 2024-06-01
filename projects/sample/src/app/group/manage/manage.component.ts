@@ -6,6 +6,7 @@ import { Group } from '../../model/group';
 import { CompetitionService } from '../../services/competition.service';
 import { Competition } from '../../model/competition';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DiscordConfig } from '../../model/discord-config';
 
 @Component({
   selector: 'app-manage',
@@ -40,7 +41,7 @@ export class ManageComponent implements OnInit {
         });
       }
     }
-
+    
     getInviteId() {
       this.groupService.getInviteId(this.group.id, this.dataService.currentUser.userId).subscribe(response => {
         const url = `${window.location.origin}/#/grp/invite/${response.data}`;
@@ -51,6 +52,10 @@ export class ManageComponent implements OnInit {
     
     isCompetitionInGroup(competition: Competition) {
       return this.group.competitions.findIndex(comp => comp === competition.id) > -1;
+    }
+    
+    areNotificationEnabled(competition: Competition) {
+      return this.group.discord?.competitions?.findIndex(comp => comp === competition.id) > -1;
     }
     
     addOrRemoveCompetition(competition: Competition, $event: any) {
@@ -64,6 +69,31 @@ export class ManageComponent implements OnInit {
         this.groupService.addCompetitionToGroup(this.group.id, competition.id, this.dataService.currentUser.userId).subscribe(group => {
           if (this.group.id === group.id) {
             this.group.competitions.push(competition.id);
+            this.snackBar.open("Groupe mis à jour.", 'x', {duration: 5000});
+          }
+        });
+      }
+    }
+    
+    
+    addOrRemoveNotification(competition: Competition, $event: any) {
+      if (!$event.checked && this.areNotificationEnabled(competition)) {
+        this.groupService.removeDiscordNotificationForCompetition(this.group.id, competition.id, this.dataService.currentUser.userId).subscribe(group => {
+          if (this.group.id === group.id) {
+            this.group.discord.competitions.splice(this.group.discord.competitions.indexOf(competition.id), 1);
+          }
+        });
+      } else if ($event.checked && !this.areNotificationEnabled(competition)) {
+        this.groupService.addDiscordNotificationForCompetition(this.group.id, competition.id, this.dataService.currentUser.userId).subscribe(group => {
+          if (this.group.id === group.id) {
+            if (!this.group.discord) {
+              this.group.discord = new DiscordConfig();
+            }
+            if (!this.group.discord.competitions) {
+              this.group.discord.competitions = [];
+            }
+            this.group.discord.competitions.push(competition.id);
+            this.snackBar.open("Groupe mis à jour.", 'x', {duration: 5000});
           }
         });
       }

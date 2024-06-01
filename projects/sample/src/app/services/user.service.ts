@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Observable, catchError, map, of, tap } from 'rxjs';
 import { User } from '../model/user';
+import { DataService } from './data.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   
-  constructor(protected http: HttpClient) { }
+  constructor(protected http: HttpClient,
+              protected dataService: DataService) { }
   
   getUser(userId: string): Observable<User> {
     const url = `api/user/${userId}`;
@@ -22,6 +24,17 @@ export class UserService {
   getLightUser(userId: string): Observable<User> {
     const url = `api/user/${userId}/light`;
     return this.http.get<User>(url);
+  }
+
+  updateCurrentUser(user: User) {
+    const url = `api/user`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+      'refreshToken': `${localStorage.getItem('refreshToken')}`
+    });
+    return this.http.post<User>(url, user, { headers }).pipe(tap(updatedUser => {
+      this.dataService.currentUser = updatedUser;
+    }));
   }
   
   getUserFromToken() {

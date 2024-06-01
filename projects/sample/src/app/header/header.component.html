@@ -7,9 +7,12 @@
             <mat-icon>home</mat-icon>
         </button>
     </span>
-    <button mat-button *ngIf="!dataService.currentUser && !loading" (click)="connectWithTwitch()">Connect with Twitch</button>
-    <span *ngIf="dataService.currentUser" class="user-info" (click)="goToProfile()">
-        <img class="avatar" [src]="dataService.currentUser.profileImageUrl"/>
-        <span>{{dataService.currentUser.displayName}}</span>
-    </span>
+    <div class="right-side">
+        <mat-icon class="info" (click)="openInfoDialog()">info_outline</mat-icon>
+        <button mat-button *ngIf="!dataService.currentUser && !loading" (click)="connectWithTwitch()">Connect with Twitch</button>
+        <span *ngIf="dataService.currentUser" class="user-info" (click)="goToProfile()">
+            <img class="avatar" [src]="dataService.currentUser.profileImageUrl"/>
+            <span>{{dataService.currentUser.displayName}}</span>
+        </span>
+    </div>
 </mat-toolbar>

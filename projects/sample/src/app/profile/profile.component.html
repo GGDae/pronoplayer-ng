@@ -1,14 +1,46 @@
+
+<mat-spinner *ngIf="!currentUser"></mat-spinner>
+<mat-progress-bar class="saving-indicator" *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 <div *ngIf="currentUser" class="profile">
+    <mat-slide-toggle [checked]="darkMode" (change)="switchMode()">Mode sombre</mat-slide-toggle>
     <h2>Profil</h2>
     <div class="user-profile" *ngIf="currentUser.id && currentUser.id === dataService.currentUser.id">
-        Tes groupes : 
-        <div *ngFor="let group of currentUser.groups">
-            {{group.name}}
+        <div *ngIf="currentUser.badges" class="badges">
+            <span class="badge-title">Tes badges</span>
+            <div *ngFor="let badge of currentUser.badges" class="badge-container" (click)="updateBadge(badge, !badge.active)">
+                <img class="badge" [src]="badge.imageLink"/>
+                <span>{{badge.label}}</span>
+                <mat-checkbox [checked]="badge.active" class="checkbox"></mat-checkbox>
+            </div>
         </div>
-        Tes badges : 
-        <div *ngFor="let badge of currentUser.badges">
-            <mat-checkbox [checked]="badge.active" (change)="badge.active = !badge.active"></mat-checkbox>
-            {{badge.label}} <img class="badge" [src]="badge.imageLink"/>
+        <div class="discord">
+            <div class="no-code" *ngIf="!currentUser.discord || !currentUser.discord.code">
+                Relis ton compte discord pour bénéficier des rappels automatiques des jours de match !
+                <button class="generate-code" (click)="generateDiscordCode()">
+                    <img class="discord-logo" src="assets/images/discord_logo.png">
+                    Découvre ton code unique
+                </button>
+            </div>
+            <p #code *ngIf="currentUser.discord && currentUser.discord.code && !currentUser.discord.reminder">
+                Envoie la commande ci-dessous en message privé au bot PronoPlayer sur Discord (disponible sur le serveur de ta communauté) !<br><br><br>
+                <span class="example" (click)="notifyCopy()" ngxClipboard [cbContent]="'!pronoplayer remind ' + currentUser.discord.code" [container]="code"><i>!pronoplayer remind {{currentUser.discord.code}}</i><br></span>
+                <br><br>
+                Tu recevras des messages privés automatiques si tu oublies un jour de pronostic.
+                <br><br>
+                <b>Rafraichis cette page une fois le code envoyé au bot pour paramétrer tes rappels !</b>
+            </p>
+        </div>
+        <div class="manage" *ngIf="currentUser.discord && currentUser.discord.reminder">
+            <div class="competitions" *ngIf="competitions">
+                <div class="competition no-border">
+                    <span>Compétition</span>
+                    <span>Activer les rappels Discord par MP</span>
+                </div>
+                <div class="competition" *ngFor="let competitionName of competitionNames">
+                    <span>{{competitionName}}</span>
+                    <mat-checkbox [checked]="areNotificationEnabled(competitionName)" (change)="addOrRemoveNotification(competitionName, $event)"></mat-checkbox>
+                </div>
+            </div>
         </div>
     </div>
     <div>

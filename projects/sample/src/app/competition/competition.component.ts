@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit, OnDestroy, Input, AfterViewInit, AfterContentChecked, AfterContentInit, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
 import { Competition } from '../model/competition';
 import { PronoWeek } from '../model/pronoWeek';
 import { Pronostic } from '../model/pronostic';
@@ -15,6 +15,7 @@ import { Team } from '../model/team';
 import { MatchScore } from '../model/matchScore';
 import { MatDialog } from '@angular/material/dialog';
 import { RandomValidationComponent } from './random-validation/random-validation.component';
+import { PronoDay } from '../model/pronoDay';
 
 @Component({
   selector: 'app-competition',
@@ -35,7 +36,10 @@ export class CompetitionComponent implements OnInit, OnDestroy {
   public needSaving = false;
   public loading = false;
   public smallScreen = false;
+  public closestDay!: PronoDay | null;
   private intervalId: any;
+  @Input() groupId!: string;
+  @Input() competitionId!: string;
   
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
@@ -61,22 +65,32 @@ export class CompetitionComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
       this.checkScreenSize();
       this.loading = true;
-      const groupId = this.route.snapshot.paramMap.get('id');
-      const competitionId = this.route.snapshot.paramMap.get('competitionId');
+      const groupId = this.groupId || this.route.snapshot.paramMap.get('id');
+      const competitionId = this.competitionId || this.route.snapshot.paramMap.get('competitionId');
       if (this.dataService.currentUser) {
-        if (groupId) {
-          this.groupService.getGroup(groupId).subscribe(group => {
-            this.dataService.currentGroup = group;
-          });
-        }
-        if (competitionId) {
-          this.competitionService.getCompetition(competitionId).subscribe(competition => {
-            this.currentCompetition = competition;
+        if (this.route.snapshot.data && this.route.snapshot.data['data'] && Array.isArray(this.route.snapshot.data['data']) && this.route.snapshot.data['data'].length === 2) {
+          this.dataService.currentGroup = this.route.snapshot.data['data'][0];
+          this.currentCompetition = this.route.snapshot.data['data'][1];
+          this.dataService.currentCompetition = this.currentCompetition;
+          if (this.currentCompetition) {
+            this.dataService.refreshBreadcrumbsCompetition();
             this.selectCompetition(this.currentCompetition);
-          });
-        } else if (this.dataService.currentCompetition) {
-          this.currentCompetition = this.dataService.currentCompetition;
-          this.selectCompetition(this.currentCompetition);
+          }
+        } else {
+          if (groupId) {
+            this.groupService.getGroup(groupId).subscribe(group => {
+              this.dataService.currentGroup = group;
+            });
+          }
+          if (competitionId) {
+            this.competitionService.getCompetition(competitionId).subscribe(competition => {
+              this.currentCompetition = competition;
+              this.selectCompetition(this.currentCompetition);
+            });
+          } else if (this.dataService.currentCompetition) {
+            this.currentCompetition = this.dataService.currentCompetition;
+            this.selectCompetition(this.currentCompetition);
+          }
         }
         this.possibleOutcomes = [];
         this.possibleOutcomes.push({bo: 3, outcomes: this.generateOutcomes(3)});
@@ -102,11 +116,40 @@ export class CompetitionComponent implements OnInit, OnDestroy {
       this.dataService.currentCompetition = competition;
       this.pronoService.getPronoWeeks(this.dataService.currentCompetition.id).subscribe(pronoWeeks => {
         pronoWeeks.sort((a, b) => new Date(a.lockDate).getTime() - new Date(b.lockDate).getTime());
+        pronoWeeks.forEach(week => {
+          week.pronoDays.forEach(day => {
+            day.finished = this.isFinished(day);
+            day.matchs?.sort((a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime());
+          });
+        });
         this.pronoWeeks = pronoWeeks;
         const closestWeek = this.findClosestWeek();
         if (closestWeek && closestWeek.week && closestWeek.index > -1) {
           this.currentWeek = closestWeek.week;
           this.currentIndex = closestWeek.index;
+          let closestFinishedDay!: PronoDay;
+          this.currentWeek.pronoDays.forEach((day, index) => {
+            if (new Date(day.date).getDate() === new Date().getDate()) {
+              if (day.finished && this.currentWeek.pronoDays.length > index + 1) {
+                this.closestDay = this.currentWeek.pronoDays[index +1];
+              } else {
+                this.closestDay = day;
+              }
+            } else {
+              if (day.finished) {
+                if (!closestFinishedDay) {
+                  closestFinishedDay = day;
+                } else {
+                  if (closestFinishedDay.day < day.day) {
+                    closestFinishedDay = day;
+                  }
+                }
+              }
+            }
+          });
+          if (!this.closestDay) {
+            this.closestDay = closestFinishedDay;
+          }
         }
         this.showCoin = this.showTheCoin();
         if (this.currentWeek) {
@@ -117,6 +160,17 @@ export class CompetitionComponent implements OnInit, OnDestroy {
       });
     }
     
+    isFinished(day: PronoDay) {
+      let finished = true;
+      day.matchs?.forEach(match => {
+        if (!match.result) {
+          finished = false;
+          return;
+        }
+      });
+      return finished;
+    }
+    
     findClosestWeek(): { week: PronoWeek | null, index: number } {
       const today = new Date();
       let closestWeek: PronoWeek | null = null;
@@ -125,12 +179,12 @@ export class CompetitionComponent implements OnInit, OnDestroy {
       let closestFinishedIndex = -1;
       let closestTimeDiff = Number.MAX_VALUE;
       let closestFinishedTimeDiff = Number.MAX_VALUE;
-      
       for (let i = 0; i < this.pronoWeeks.length; i++) {
         const event = this.pronoWeeks[i];
         event.pronoDays.forEach(pronoDay => {
           let allFinished = true;
           let hasCloser = false;
+          let hasCloserFinished = false;
           pronoDay.matchs?.forEach(match => {
             if (match) {
               if (match.state !== 'completed') {
@@ -140,19 +194,17 @@ export class CompetitionComponent implements OnInit, OnDestroy {
                 const timeDiff = Math.abs(new Date(match.dateTime).getTime() - today.getTime());
                 if (match.state !== 'completed' && timeDiff < closestTimeDiff) {
                   closestTimeDiff = timeDiff;
-                  // closestWeek = event;
-                  // closestIndex = i;
                   hasCloser = true;
                 } else {
                   if (timeDiff < closestFinishedTimeDiff) {
                     closestFinishedTimeDiff = timeDiff;
-                    hasCloser = true;
+                    hasCloserFinished = true;
                   }
                 }
               }
             }
           });
-          if (hasCloser && allFinished) {
+          if (hasCloserFinished && allFinished) {
             closestFinishedWeek = event;
             closestFinishedIndex = i;
           }
@@ -169,7 +221,7 @@ export class CompetitionComponent implements OnInit, OnDestroy {
     }
     
     isLocked(match: Match) {
-      if (match.inProgress) {
+      if (match.locked) {
         return true;
       }
       const today = new Date();
@@ -219,6 +271,16 @@ export class CompetitionComponent implements OnInit, OnDestroy {
             this.initUserPronos().subscribe(() => {
               this.loadScores();
             });
+          }
+          if (this.closestDay) {
+            let d = document.getElementById('day' + this.closestDay.day);
+            if (d) {
+              d.scrollIntoView({
+                behavior: "auto",
+                block: "start",
+                inline: "start"
+              });
+            }
           }
           this.loading = false;
         });
@@ -311,11 +373,11 @@ export class CompetitionComponent implements OnInit, OnDestroy {
           this.pronoService.setAnswer(this.userPronos, this.dataService.currentUser.userId).subscribe(prono => {
             this.saving = false;
             if (!this.needSaving) {
-              this.snackBar.open("Pronostic enregitré", 'x', {duration: 5000});
+              this.snackBar.open("Pronostic(s) enregistré(s)", 'x', {duration: 5000});
             }
           });
         }
-      }, 1500);
+      }, 200);
     }
     
     randomize() {

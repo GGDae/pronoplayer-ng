@@ -1,5 +1,5 @@
-<div class="ranking" *ngIf="dataService.currentUser">
-    <mat-form-field class="field">
+<div class="ranking" *ngIf="dataService.currentUser || guestMode">
+    <mat-form-field class="field" *ngIf="groups">
         <mat-select [(value)]="group" (selectionChange)="changeGroup()">
             <mat-option *ngFor="let grp of groups" [value]="grp">{{grp.name}}</mat-option>
         </mat-select>
@@ -13,6 +13,7 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
+    <button mat-button *ngIf="dataService.currentUser && group && competition && isAdministrator()" (click)="generateSnapshot()">Generate snapshot</button>
     <mat-spinner *ngIf="loading"></mat-spinner>
     <div class="ranking" *ngIf="dataSource && sortedRankingWithUserData && sortedRankingWithUserData.length > 0 else noData">
         <table class="ranking-table" mat-table [dataSource]="dataSource">
@@ -22,7 +23,7 @@
                     <img *ngIf="item.displayedRank === 1" class="medal" src="assets/images/gold-medal.svg"/>
                     <img *ngIf="item.displayedRank === 2" class="medal" src="assets/images/silver-medal.svg"/>
                     <img *ngIf="item.displayedRank === 3" class="medal" src="assets/images/bronze-medal.svg"/>
-                    <span class="rank" [ngClass]="{'inside-medal': item.displayedRank < 4}">{{ item.displayedRank }}</span>
+                    <span class="rank" *ngIf="item.displayedRank > 3" [ngClass]="{'inside-medal': item.displayedRank < 4}">{{ item.displayedRank }}</span>
                 </td>
             </ng-container>
             <ng-container matColumnDef="avatar">
@@ -33,7 +34,7 @@
                             <img class="badge" *ngIf="badge.active" [src]="badge.imageLink" [matTooltip]="badge.label"/>
                         </ng-container>
                     </span>
-                    <img class="avatar" [src]="item.user.profileImageUrl"/>
+                    <img class="avatar" [src]="item.user.profileImageUrl" (error)="handleMissingAvatar($event)"/>
                 </td>
             </ng-container>
             <ng-container matColumnDef="name">
@@ -42,12 +43,36 @@
             </ng-container>
             <ng-container matColumnDef="score">
                 <th mat-header-cell *matHeaderCellDef> Score </th>
-                <td mat-cell *matCellDef="let item"> {{ item.score }} </td>
+                <td mat-cell *matCellDef="let item">
+                    <span class="points">{{ item.score }}</span>
+                    <span *ngIf="!smallScreen && item.totalGuess > 0">({{(item.goodGuess / item.totalGuess * 100).toFixed(2)}}%)</span>
+                    <span *ngIf="smallScreen && item.totalGuess > 0">({{(item.goodGuess / item.totalGuess * 100).toFixed(0)}}%)</span>
+                    <span *ngIf="item.totalGuess === 0">( - )</span>
+                </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'self': dataService.currentUser && row.user.displayName === dataService.currentUser.displayName}"></tr>
         </table>
+        <span class="divider" *ngIf="userIsBadButShownAnyway">...</span>
+        <div class="user-rank" *ngIf="userIsBadButShownAnyway">
+            <span class="rank rank-below">{{ loggedUserRanking.displayedRank }}</span>
+            <div class="avatar-cell">
+                <span class="badge-span" *ngIf="loggedUserRanking">
+                    <ng-container *ngFor="let badge of loggedUserRanking.user?.badges">
+                        <img class="badge" *ngIf="badge.active" [src]="badge.imageLink" [matTooltip]="badge.label"/>
+                    </ng-container>
+                </span>
+                <img class="avatar" [src]="loggedUserRanking.user?.profileImageUrl" (error)="handleMissingAvatar($event)"/>
+            </div>
+            <span class="name">{{ loggedUserRanking.user?.displayName }}</span>
+            <div class="score">
+                <span class="points">{{ loggedUserRanking.score }}</span>
+                <span *ngIf="!smallScreen && loggedUserRanking.totalGuess > 0">({{(loggedUserRanking.goodGuess / loggedUserRanking.totalGuess * 100).toFixed(2)}}%)</span>
+                <span *ngIf="smallScreen && loggedUserRanking.totalGuess > 0">({{(loggedUserRanking.goodGuess / loggedUserRanking.totalGuess * 100).toFixed(0)}}%)</span>
+                <span *ngIf="loggedUserRanking.totalGuess === 0">( - )</span>
+            </div>
+        </div>
     </div>
-    <mat-paginator [ngClass]="{'show': dataSource && sortedRankingWithUserData && sortedRankingWithUserData.length > 0}" #paginator class="paginator" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
+    <mat-paginator (page)="pageChange($event)" [ngClass]="{'show': dataSource && sortedRankingWithUserData && sortedRankingWithUserData.length > 0}" #paginator class="paginator" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>
     <ng-template #noData><div *ngIf="!loading" class="no-data">Pas de résultas pour l'instant.</div></ng-template>
 </div>
