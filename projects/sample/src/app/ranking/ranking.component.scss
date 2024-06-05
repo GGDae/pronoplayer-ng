@@ -14,12 +14,16 @@
     .field {
         text-align: center;
     }
-
+    
     .divider {
         margin-top: -10px;
         margin-bottom: 2px;
     }
 
+    .display-name {
+        padding-left: 10%;
+    }
+    
     .user-rank {
         background-color: var(--secondary-bkg-color);
         display: flex;
@@ -64,10 +68,11 @@
         justify-content: center;
         align-items: center;
     }
-
+    
     
     .badge-span {
         display: flex;
+        align-items: center;
     }
     
     .paginator {
@@ -83,9 +88,31 @@
     .mat-table {
         background-color: var(--bkg-color);
     }
-    
+
     .avatar {
         max-height: 50px;
+    }
+    .avatar-container {
+        position: relative;
+        width: auto;
+        max-width: 50px;
+        max-height: 50px;
+
+        .avatar {
+            position: absolute;
+            max-height: 50px;
+        }
+
+        .profile {
+            top: -25px;
+            left: 0;
+        }
+
+        .couronne {
+            top: -45px;
+            left: 22px;
+            height: 40px;
+        }
     }
     
     .badge {
@@ -110,7 +137,7 @@
     .user-rank {
         width: 60vw;
         max-width: 1024px;
-
+        
         .name {
             width: 14%;
         }
@@ -125,6 +152,7 @@
     }
     .badge-span {
         width: 45px;
+        height: 50px;
     }
     .points {
         padding-right: 10px;
@@ -157,6 +185,7 @@
     }
     .badge-span {
         width: 40px;
+        height: 50px;
     }
     .points {
         padding-right: 3px;
