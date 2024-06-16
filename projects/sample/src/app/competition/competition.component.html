@@ -22,9 +22,9 @@
                                 <span class="team-name" *ngIf="!smallScreen">{{team.name}}</span>
                                 <div class="team-name small" *ngIf="smallScreen">
                                     <span>{{team.code}}</span>
-                                    <span class="small-records" *ngIf="team.record && !match.result">({{team.record.wins}} - {{team.record.losses}})</span>
+                                    <span class="small-records" *ngIf="team.record && (!match.result || match.strategy.count === 1)">({{team.record.wins}} - {{team.record.losses}})</span>
                                 </div>
-                                <span class="records" *ngIf="!smallScreen && team.record && !match.result">({{team.record.wins}} - {{team.record.losses}})</span>
+                                <span class="records" *ngIf="!smallScreen && team.record && (!match.result || match.strategy.count === 1)">({{team.record.wins}} - {{team.record.losses}})</span>
                                 <span *ngIf="match.strategy.count > 1 && team.result && team.result.gameWins !== undefined && (match.result || isLocked(match))" class="wins">{{team.result.gameWins}}</span>
                             </span>
                         </div>
