@@ -138,8 +138,9 @@ mat-spinner {
             }
             
             &.bad-result {
-                opacity: 0.6;
+                opacity: 0.75;
                 background-color: var(--bad-result-color) !important;
+                background: repeating-linear-gradient(45deg, transparent, #000000 8px, transparent, #dddddd 0px);
             }
             
             &.best-of {
